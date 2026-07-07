@@ -1,0 +1,9 @@
+tensorflow==2.15.0
+opencv-python
+mediapipe
+numpy
+matplotlib
+pandas
+scikit-learn
+streamlit
+Pillow
