@@ -1,182 +1,128 @@
-# 🤟 AI Sign Language Translator using Deep Learning
+# 🤟 AI Sign Language Translator (Real-Time ASL Recognition)
 
-## 📌 Project Overview
+![Python](https://shields.io)
+![TensorFlow](https://shields.io)
+![OpenCV](https://shields.io)
+![MediaPipe](https://shields.io)
 
-The AI Sign Language Translator is a Deep Learning-based computer vision project that recognizes American Sign Language (ASL) hand gestures in real time using a webcam.
-
-The system uses **MobileNetV2** for image classification and **MediaPipe** for hand detection. It predicts the corresponding alphabet and can convert recognized gestures into text.
-
----
-
-## 🚀 Features
-
-- Real-time hand detection using MediaPipe
-- Deep Learning model using MobileNetV2
-- Live webcam prediction
-- Alphabet recognition (A-Z)
-- Bounding box around detected hand
-- Hand landmark visualization
-- High accuracy image classification
-- Easy to train with custom datasets
+A real-time Computer Vision and Deep Learning application that translates **American Sign Language (ASL)** hand gestures into text using a live webcam feed. Built with **MediaPipe** for hand landmark detection and a fine-tuned **MobileNetV2** classifier for low-latency gesture recognition.
 
 ---
 
-## 🛠️ Technologies Used
+### 🎥 Live Demo & Training Metrics
 
-- Python 3.10
-- TensorFlow / Keras
-- OpenCV
-- MediaPipe
-- NumPy
-- Matplotlib
+> **Tip:** Add a short screen recording (`demo.gif`) of your webcam predicting signs into an `assets/` folder so recruiters see it working immediately.
+
+| Training Accuracy Curve | Training Loss Curve |
+| :---: | :---: |
+| ![Training Accuracy](./models/accuracy.png) | ![Training Loss](./models/loss.png) |
 
 ---
 
-## 📂 Project Structure
+### 🎯 Problem & Motivation
+Communication barriers between deaf/hard-of-hearing individuals and non-signers often require specialized hardware or human interpreters. This project delivers a **lightweight, webcam-only assistive AI tool** capable of recognizing 29 ASL gestures (`A–Z`, `space`, `del`, `nothing`) in real time on standard consumer laptops.
 
+---
+
+### 🏗️ System Pipeline & Architecture
+
+```text
+[Webcam Video Stream (OpenCV)]
+              │
+              ▼
+[MediaPipe Hand Landmark Detection] ──► Crops Region of Interest (ROI) + Draws Landmarks
+              │
+              ▼
+[MobileNetV2 Transfer Learning Model]
+  ├── Base: MobileNetV2 (Pre-trained on ImageNet)
+  ├── GlobalAveragePooling2D
+  ├── Dense (256 units, ReLU) + Dropout
+  └── Softmax Output Layer (29 Classes)
+              │
+              ▼
+[Real-Time Character & Text Overlay]
 ```
-AI Sign Language Translator
-│
-├── dataset
-│   ├── asl_alphabet_train
-│   │   ├── A
-│   │   ├── B
-│   │   ├── C
-│   │   └── ...
-│   │
-│   └── asl_alphabet_test
-│
-├── models
-│   ├── best_model.keras
-│   ├── final_model.keras
-│   ├── accuracy.png
-│   └── loss.png
-│
-├── preprocess.py
-├── train.py
-├── predict.py
-├── requirements.txt
+
+---
+
+### ✨ Key Features
+- **Real-Time Hand Tracking:** Uses MediaPipe to isolate hand regions and render 21 3D hand landmarks with bounding boxes.
+- **29-Class Gesture Recognition:** Recognizes all 26 English alphabets (`A–Z`) plus functional controls (`space`, `del`, `nothing`) to form words.
+- **Lightweight & Fast Inference:** Powered by MobileNetV2 transfer learning for smooth real-time FPS without heavy GPU requirements.
+- **Modular Training Pipeline:** Includes dedicated scripts for preprocessing, custom dataset training, and live inference.
+
+---
+
+### 📊 Dataset & Model Configuration
+- **Dataset:** [Kaggle ASL Alphabet Dataset](https://kaggle.com) (29 classes)
+- **Loss Function:** Categorical Crossentropy
+- **Optimizer:** Adam
+- **Saved Artifacts:** `best_model.keras` (checkpoint with lowest validation loss) & `final_model.keras`
+
+---
+
+### 📂 Project Structure
+
+```text
+AI-Sign-Language-Translator/
+├── dataset/
+│   ├── asl_alphabet_train/     # Training images organized across 29 class folders
+│   └── asl_alphabet_test/      # Test samples for evaluation
+├── models/
+│   ├── best_model.keras        # Best validation checkpoint
+│   ├── final_model.keras       # Final trained model weights
+│   ├── accuracy.png            # Training vs. validation accuracy plot
+│   └── loss.png                # Training vs. validation loss plot
+├── preprocess.py               # Image resizing, normalization & data pipeline
+├── train.py                    # MobileNetV2 transfer learning & model checkpointing
+├── predict.py                  # Real-time OpenCV + MediaPipe webcam inference
+├── requirements.txt            # Python dependencies
 └── README.md
 ```
 
 ---
 
-## 📊 Dataset
+### ⚙️ How to Run Locally
 
-Dataset Used:
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com
+   cd AI-Sign-Language-Translator
+   ```
 
-**ASL Alphabet Dataset**
+2. **Create a virtual environment & install dependencies:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate        # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
 
-Classes:
+3. **Run real-time webcam prediction:**
+   ```bash
+   python predict.py
+   ```
 
-- A - Z
-- del
-- nothing
-- space
-
-Total Classes: **29**
-
----
-
-## ⚙️ Model Architecture
-
-- MobileNetV2 (Pre-trained on ImageNet)
-- Global Average Pooling
-- Dense Layer (256 neurons)
-- Dropout Layer
-- Softmax Output Layer
-
-Loss Function:
-
-```
-Categorical Crossentropy
-```
-
-Optimizer:
-
-```
-Adam
-```
+4. *(Optional)* **Retrain on custom dataset:**
+   ```bash
+   python preprocess.py
+   python train.py
+   ```
 
 ---
 
-## 🔥 Training
-
-Run:
-
-```bash
-python train.py
-```
-
-After training, the following files are generated:
-
-- best_model.keras
-- final_model.keras
-- accuracy.png
-- loss.png
+### 🚀 Roadmap & Future Improvements
+- [ ] **Sentence Builder & Text-to-Speech:** Buffer predicted letters into complete words/sentences with audio output (`pyttsx3` / `gTTS`).
+- [ ] **Interactive Web UI:** Wrap inference into a **Streamlit** dashboard so users can test gestures directly in the browser.
+- [ ] **Dynamic Word-Level Signs:** Extend recognition from static alphabets to motion-based words using LSTM / sequence modeling.
 
 ---
 
-## ▶️ Prediction
-
-Run:
-
-```bash
-python predict.py
-```
-
-The webcam will open.
-
-The application:
-
-- Detects the hand
-- Draws landmarks
-- Predicts the sign
-- Displays the recognized alphabet
+### 👩‍💻 Author
+**Thoram Sudeeptha**  
+B.Tech in Computer Science (AI & ML) — Malla Reddy Engineering College for Women  
+[GitHub](https://github.com) • [LinkedIn](https://linkedin.com)
 
 ---
 
-## 📈 Results
-
-- Deep Learning based classification
-- Real-time webcam prediction
-- MediaPipe hand tracking
-- Lightweight MobileNetV2 architecture
-
----
-
-## 📷 Future Improvements
-
-- Sentence generation
-- Voice output
-- Streamlit dashboard
-- Multi-hand detection
-- Word prediction
-- Translation to different languages
-
----
-
-## 💡 Applications
-
-- Communication for deaf and mute individuals
-- Smart education
-- Human-computer interaction
-- Gesture-controlled systems
-- Assistive AI
-
----
-
-## 👨‍💻 Author
-
-**Thoram Sudeeptha**
-
-B.Tech – Artificial Intelligence & Machine Learning
-
----
-
-## ⭐ Acknowledgements
-
-- TensorFlow
-- OpenCV
-- MediaPipe
-- Kaggle ASL Alphabet Dataset
+### 🙏 Acknowledgements
+- [TensorFlow & Keras](https://tensorflow.org) • [Google MediaPipe](https://google.com) • [OpenCV](https://opencv.org) • [Kaggle ASL Alphabet Dataset](https://kaggle.com)
